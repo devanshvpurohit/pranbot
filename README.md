@@ -1,110 +1,80 @@
-This Markdown (MD) document outlines the complete wiring and pin configuration for your ESP32 Gas Robot, based on the provided source code.
+# 🤖 Pran-Bot: Autonomous IoT Environmental Guardian
+
+**Pran-Bot** (inspired by the Sanskrit word for "Breath/Life Force") is a mobile sensing platform that bridges the gap between industrial safety and autonomous robotics. By combining a multi-gas sensing array with intelligent obstacle avoidance, it transforms static environmental monitoring into a proactive, mobile patrol system.
 
 ---
 
-# 🤖 Gas Robot Connection Guide
+## 🧠 System Architecture & "Intelligence"
 
-This document provides the hardware mapping for the **Gas_Robot_AP** system. It uses an **ESP32** to monitor air quality and provide autonomous obstacle avoidance.
+The robot operates on a multi-layer logic system:
 
-## 🔌 1. Power Distribution
+* 
+**The Sensing Layer**: A quad-sensor array (MQ-2, MQ-3, MQ-7, MQ-135) continuously samples air quality.
 
-| Component | Connection | Notes |
+
+* 
+**The Decision Engine**: If Smoke or CO levels cross critical safety thresholds (Smoke > 2000 or CO > 1500), the robot executes an "Emergency Stop".
+
+
+* 
+**The Mobility Layer**: Uses IR-based reactive navigation to navigate complex indoor environments autonomously.
+
+
+* 
+**The API Bridge**: An onboard WebServer exposes a JSON API, allowing live data visualization and Python-based AI command.
+
+
+
+---
+
+## 🛠 Hardware Interconnects
+
+*Built on an ESP32 SoC for high-speed processing and dual-core performance.*
+
+| Subsystem | Components | ESP32 Pins |
 | --- | --- | --- |
-| **ESP32 VIN** | Battery (+) | Use a voltage regulator if battery > 5V. |
-| **L298N VCC** | Battery (+) | Direct battery power (e.g., 7.4V or 12V). |
-| **Common GND** | Battery (-) | <br>**Crucial:** Connect ESP32 GND and L298N GND.
+| **Gas Array** | MQ-2 (Smoke), MQ-3 (CH4), MQ-7 (CO), MQ-135 (AQI) | GPIO 34, 35, 32, 33 
 
  |
-| **MQ Sensors VCC** | ESP32 5V / External 5V | MQ sensors require 5V to heat the element. |
-
----
-
-## 🏎️ 2. Motor Controller (L298N)
-
-The motors are controlled using PWM on channels 0 and 1.
-
-| ESP32 Pin | L298N Pin | Function |
-| --- | --- | --- |
-| **GPIO 12** | **ENA** | Speed Control Motor A (PWM) 
+| **Propulsion** | L298N Dual Bridge (IN1-IN4) | GPIO 25, 26, 27, 14 
 
  |
-| **GPIO 13** | **ENB** | Speed Control Motor B (PWM) 
+| **Speed Control** | Dual PWM (ENA/ENB) | GPIO 12, 13 
 
  |
-| **GPIO 25** | **IN1** | Motor A Direction 1 
+| **Vision/Safety** | Dual Infrared (IR) Obstacle Sensors | GPIO 4, 5 
 
  |
-| **GPIO 26** | **IN2** | Motor A Direction 2 
-
- |
-| **GPIO 27** | **IN3** | Motor B Direction 1 
-
- |
-| **GPIO 14** | **IN4** | Motor B Direction 2 
+| **Power** | Battery Voltage Monitoring | GPIO 36 
 
  |
 
 ---
 
-## ⚠️ 3. Gas & Safety Sensors
+## 🔬 Research & Academic Alignment
 
-These sensors use Analog inputs to detect hazardous conditions.
+This project serves as a physical validation of the **"Indoor Air Quality Detection Robot Model"** (referenced in IEEE literature), proving that:
 
-| ESP32 Pin | Sensor Model | Detected Gas | Emergency Threshold |
-| --- | --- | --- | --- |
-| **GPIO 34** | **MQ-2** | Smoke / Combustion | <br>`> 2000` (Stop) 
-
- |
-| **GPIO 35** | **MQ-3** | Methane | N/A 
-
- |
-| **GPIO 32** | **MQ-7** | Carbon Monoxide (CO) | <br>`> 1500` (Stop) 
-
- |
-| **GPIO 33** | **MQ-135** | Air Quality | N/A 
-
- |
-| **GPIO 36** | **BAT** | Battery Level | Monitoring via API 
-
- |
+* **Sensor Fusion** provides a more accurate Gas Pollution Index (GPI) than single-sensor systems.
+* **Autonomous Patrols** significantly reduce human exposure to hazardous leaks during initial inspection.
+* **Historical Forensics** (via the PyQt dashboard) allow for data-driven compliance and safety audits.
 
 ---
 
-## 🛡️ 4. Obstacle Avoidance (IR)
+## 📊 Data & Control API
 
-Digital infrared sensors used for the autonomous logic loop.
-
-| ESP32 Pin | Sensor Position | Logic |
-| --- | --- | --- |
-| **GPIO 4** | **Left IR** | <br>`LOW` = Obstacle detected 
-
- |
-| **GPIO 5** | **Right IR** | <br>`LOW` = Obstacle detected 
-
- |
-
----
-
-## 🌐 5. Network & API Info
+The robot serves a live API for remote integration via its local Access Point **"Gas_Robot_AP"**:
 
 * 
-**SSID:** `Gas_Robot_AP` 
+`GET /data`: Returns real-time sensor telemetry (Smoke, Methane, CO, Air Quality, Battery) in JSON format.
 
 
 * 
-**Password:** `12345678` 
+`GET /cmd?d=`: Remotely overrides navigation (f=forward, b=back, l=left, r=right, s=stop).
 
 
 * 
-**Data Endpoint:** `/data` (Returns JSON of all sensor values) 
-
-
-* 
-**Control Endpoint:** `/cmd?d=` (f=forward, b=back, l=left, r=right, s=stop) 
-
-
-* 
-**Auto Toggle:** `/auto?v=1` (Enable) or `v=0` (Disable) 
+`GET /auto?v=1`: Activates the autonomous "Decision Engine".
 
 
 
