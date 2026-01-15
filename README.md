@@ -8,20 +8,15 @@
 
 The robot operates on a multi-layer logic system:
 
-* 
-**The Sensing Layer**: A quad-sensor array (MQ-2, MQ-3, MQ-7, MQ-135) continuously samples air quality.
+***The Sensing Layer**: A quad-sensor array (MQ-2, MQ-3, MQ-7, MQ-135) continuously samples air quality.
+
+***The Decision Engine**: If Smoke or CO levels cross critical safety thresholds (Smoke > 2000 or CO > 1500), the robot executes an "Emergency Stop".
 
 
-* 
-**The Decision Engine**: If Smoke or CO levels cross critical safety thresholds (Smoke > 2000 or CO > 1500), the robot executes an "Emergency Stop".
+***The Mobility Layer**: Uses IR-based reactive navigation to navigate complex indoor environments autonomously.
 
 
-* 
-**The Mobility Layer**: Uses IR-based reactive navigation to navigate complex indoor environments autonomously.
-
-
-* 
-**The API Bridge**: An onboard WebServer exposes a JSON API, allowing live data visualization and Python-based AI command.
+***The API Bridge**: An onboard WebServer exposes a JSON API, allowing live data visualization and Python-based AI command.
 
 
 
@@ -55,9 +50,9 @@ The robot operates on a multi-layer logic system:
 
 This project serves as a physical validation of the **"Indoor Air Quality Detection Robot Model"** (referenced in IEEE literature), proving that:
 
-* **Sensor Fusion** provides a more accurate Gas Pollution Index (GPI) than single-sensor systems.
-* **Autonomous Patrols** significantly reduce human exposure to hazardous leaks during initial inspection.
-* **Historical Forensics** (via the PyQt dashboard) allow for data-driven compliance and safety audits.
+**Sensor Fusion** provides a more accurate Gas Pollution Index (GPI) than single-sensor systems.
+**Autonomous Patrols** significantly reduce human exposure to hazardous leaks during initial inspection.
+**Historical Forensics** (via the PyQt dashboard) allow for data-driven compliance and safety audits.
 
 ---
 
@@ -65,16 +60,13 @@ This project serves as a physical validation of the **"Indoor Air Quality Detect
 
 The robot serves a live API for remote integration via its local Access Point **"Gas_Robot_AP"**:
 
-* 
-`GET /data`: Returns real-time sensor telemetry (Smoke, Methane, CO, Air Quality, Battery) in JSON format.
+* `GET /data`: Returns real-time sensor telemetry (Smoke, Methane, CO, Air Quality, Battery) in JSON format.
 
 
-* 
-`GET /cmd?d=`: Remotely overrides navigation (f=forward, b=back, l=left, r=right, s=stop).
+* `GET /cmd?d=`: Remotely overrides navigation (f=forward, b=back, l=left, r=right, s=stop).
 
 
-* 
-`GET /auto?v=1`: Activates the autonomous "Decision Engine".
+* `GET /auto?v=1`: Activates the autonomous "Decision Engine".
 
 
 
